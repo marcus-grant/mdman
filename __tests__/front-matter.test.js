@@ -4,6 +4,7 @@ const path = require('path');
 const {
   matterStartDelimExists,
   matterEndDelimExists,
+  matterExists,
 } = require('../lib/front-matter');
 
 const {
@@ -87,6 +88,27 @@ describe('Test lib/front-matter.matterEndDelimExists()', () => {
       expect(matterEndDelimExists(fs.readFileSync(fpath))).toBeFalsy();
     });
     expect(matterEndDelimExists(fs.readFileSync(pathWithoutEndMatterDelim)))
+      .toBeFalsy();
+  });
+});
+
+describe('Test lib/front-matter.matterExists()', () => {
+  test('Truthy when `---` frontmatter delimeter exists in 1st line & somewhere after', () => {
+    pathsWithMatter.forEach(fpath => {
+      expect(matterExists(fs.readFileSync(fpath))).toBeTruthy();
+    });
+    pathsWithEmptyMatter.forEach(fpath => {
+      expect(matterExists(fs.readFileSync(fpath))).toBeTruthy();
+    });
+  });
+
+  test('Falsy when `---` delimiter either doesn\'t exist at start or after in file', () => {
+    pathsWithNoMatter.forEach((fpath) => {
+      expect(matterExists(fs.readFileSync(fpath))).toBeFalsy();
+    });
+    expect(matterExists(fs.readFileSync(pathWithoutEndMatterDelim)))
+      .toBeFalsy();
+    expect(matterExists(fs.readFileSync(pathWithoutStartMatterDelim)))
       .toBeFalsy();
   });
 });
