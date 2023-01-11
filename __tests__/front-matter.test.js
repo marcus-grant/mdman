@@ -5,6 +5,7 @@ const {
   matterStartDelimExists,
   matterEndDelimExists,
   matterExists,
+  matterDelimMismatch,
 } = require('../lib/front-matter');
 
 const {
@@ -113,3 +114,23 @@ describe('Test lib/front-matter.matterExists()', () => {
   });
 });
 
+describe('Test lib/front-matter.matterDelimMismatch()', () => {
+  test('Truthy when `---` frontmatter delimeter exists in 1st line, but not after', () => {
+    expect(matterDelimMismatch(fs.readFileSync(pathWithoutEndMatterDelim))).toBeTruthy();
+  });
+
+  test('Truthy when `---` frontmatter delimeter does not exists in 1st line, but does after', () => {
+    expect(matterDelimMismatch(fs.readFileSync(pathWithoutStartMatterDelim))).toBeTruthy();
+  });
+
+  test('Falsy when no frontmatter delimeters exist', () => {
+    pathsWithNoMatter.forEach((fpath) => {
+      expect(matterDelimMismatch(fs.readFileSync(fpath))).toBeFalsy();
+    });
+  });
+
+  test('Falsy when frontmatter empty', () => {
+    pathsWithEmptyMatter.forEach(fpath => {
+      expect(matterDelimMismatch(fs.readFileSync(fpath))).toBeFalsy();
+    });
+  });
