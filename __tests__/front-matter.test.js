@@ -6,6 +6,7 @@ const {
   matterEndDelimExists,
   matterExists,
   matterDelimMismatch,
+  matterEmpty,
 } = require('../lib/front-matter');
 
 const {
@@ -134,3 +135,30 @@ describe('Test lib/front-matter.matterDelimMismatch()', () => {
       expect(matterDelimMismatch(fs.readFileSync(fpath))).toBeFalsy();
     });
   });
+
+  test('Falsy with existing & populated frontmatter', () => {
+    pathsWithMatter.forEach(fpath => {
+      expect(matterDelimMismatch(fs.readFileSync(fpath))).toBeFalsy();
+    });
+  });
+});
+
+describe('Test lib/front-matter.matterEmpty()', () => {
+  test('Truthy when frontmatter exists but is empty', () => {
+    pathsWithEmptyMatter.forEach(fpath => {
+      expect(matterEmpty(fs.readFileSync(fpath))).toBeTruthy();
+    });
+  });
+
+  test('Falsy when front matter exists & is populated', () => {
+    pathsWithMatter.forEach(fpath => {
+      expect(matterEmpty(fs.readFileSync(fpath))).toBeFalsy();
+    });
+  });
+
+  test('Falsy when no properly formatted frontmatter exists', () => {
+    pathsWithoutMatter.forEach(fpath => {
+      expect(matterEmpty(fs.readFileSync(fpath))).toBeFalsy();
+    });
+  });
+});
