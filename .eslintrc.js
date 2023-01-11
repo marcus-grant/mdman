@@ -13,5 +13,6 @@ module.exports = {
   },
   ignorePatterns: ['__tests__/mock-notes', '__tests__/testing-dir'],
   rules: {
+    noContinue: false,
   },
 };
