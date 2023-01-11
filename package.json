@@ -1,5 +1,5 @@
 {
-  "name": "note-utils",
+  "name": ".scripts",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "agpl-3.0",
+  "license": "ISC",
   "dependencies": {
     "gray-matter": "^4.0.3"
   },
