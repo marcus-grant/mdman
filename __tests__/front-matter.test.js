@@ -3,6 +3,7 @@ const path = require('path');
 
 const {
   matterStartDelimExists,
+  matterEndDelimExists,
 } = require('../lib/front-matter');
 
 const {
@@ -68,3 +69,25 @@ describe('Test lib/front-matter.matterStartDelimExists()', () => {
       .toBeFalsy();
   });
 });
+
+describe('Test lib/front-matter.matterEndDelimExists()', () => {
+  test('Truthy when file contents have `---`, after 1st line', () => {
+    pathsWithEmptyMatter.forEach((fpath) => {
+      expect(matterEndDelimExists(fs.readFileSync(fpath))).toBeTruthy();
+    });
+    expect(matterEndDelimExists(fs.readFileSync(pathWithoutStartMatterDelim)))
+      .toBeTruthy();
+    pathsWithMatter.forEach((fpath) => {
+      expect(matterEndDelimExists(fs.readFileSync(fpath))).toBeTruthy();
+    });
+  });
+
+  test('Falsy when file contents does not have `---`, after 1st line', () => {
+    pathsWithNoMatter.forEach((fpath) => {
+      expect(matterEndDelimExists(fs.readFileSync(fpath))).toBeFalsy();
+    });
+    expect(matterEndDelimExists(fs.readFileSync(pathWithoutEndMatterDelim)))
+      .toBeFalsy();
+  });
+});
+
