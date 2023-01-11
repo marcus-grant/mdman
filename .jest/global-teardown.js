@@ -1,5 +1,5 @@
 const { rmDirTesting } = require('./mocks');
 
-export default () => {
+module.exports = () => {
   rmDirTesting();
 };

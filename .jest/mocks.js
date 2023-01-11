@@ -21,19 +21,20 @@ const cpMockNotes = (
   } if (!fs.existsSync(testingDirPath)) {
     mkDirTesting(testingDirPath);
   }
-  fs.readdir(mockDirPath, (err, mockFiles) => {
-    if (err) {
-      process.err(`Error listing files in directory ${mockDirPath}`);
-      process.exit(128);
-    }
+  let mockFiles;
+  try {
+    mockFiles = fs.readdirSync(mockDirPath);
+  } catch {
+    process.err(`Error in cpMockNotes readdir of ${mockDirPath}`);
+    process.exit(129);
+  } finally {
     mockFiles.forEach(mockFile => {
-      // console.log(`Debug cpMockNotes: Found mock file ${mockFile}`);
       fs.cpSync(
         path.join(MOCK_NOTES_PATH, mockFile),
         path.join(TESTING_DIR_PATH, mockFile),
       );
     });
-  });
+  }
 };
 
 const rmDirTesting = (testingDirPath = TESTING_DIR_PATH) => {
