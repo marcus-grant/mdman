@@ -8,6 +8,7 @@ const {
   matterDelimMismatch,
   matterEmpty,
   matterModifiedExists,
+  modifiedDate,
 } = require('../lib/front-matter');
 
 const {
@@ -30,6 +31,9 @@ const FILENAMES_WITH_MODIFIED_MATTER = [
   '.hidden-markdown.md',
   'modify-this-file.md',
 ];
+const FILENAMES_WITH_INVALID_MODIFIED_MATTER = [
+  'invalid-modified-date.md',
+];
 
 const FILENAME_WITH_NO_MATTER = 'no-matter.md';
 const FILENAME_WITH_EMPTY_MATTER = 'empty-matter.md';
@@ -48,6 +52,7 @@ let pathWithoutStartMatterDelim;
 let pathWithoutEndMatterDelim;
 let pathsWithoutMatter;
 let pathsWithModifiedMatter;
+let pathsWithInvalidModifiedMatter;
 beforeAll(() => {
   pathsWithMatter = (
     FILENAMES_WITH_MATTER.map((fname) => path.join(TESTING_DIR_PATH, fname)));
@@ -61,6 +66,8 @@ beforeAll(() => {
     FILENAMES_WITHOUT_MATTER.map((fname) => path.join(TESTING_DIR_PATH, fname)));
   pathsWithModifiedMatter = (
     FILENAMES_WITH_MODIFIED_MATTER.map((fname) => path.join(TESTING_DIR_PATH, fname)));
+  pathsWithInvalidModifiedMatter = (
+    FILENAMES_WITH_INVALID_MODIFIED_MATTER.map((fname) => path.join(TESTING_DIR_PATH, fname)));
 });
 
 describe('lib/front-matter.matterStartDelimExists()', () => {
@@ -198,6 +205,50 @@ describe('lib/front-matter.matterModifiedExists()', () => {
       if (!pathsWithModifiedMatter.includes(fpath)) {
         expect(matterModifiedExists(fs.readFileSync(fpath))).toBeFalsy();
       }
+    });
+  });
+});
+
+describe('lib/front-matter.modifiedDate()', () => {
+  it('Returns correct Date object with valid modified mattered files', () => {
+    // Create array of correct answers in order with pathsWithModifiedMatter
+    const correctDates = [
+      Date('2022-12-31T23:59:59Z'),
+      Date('2022-12-31T23:59:00+1'),
+      Date('2000-01-01T00:01:00Z'),
+    ];
+    for (let i = 0; i < pathsWithModifiedMatter.length; i += 1) {
+      const correctDate = correctDates[i];
+      const fpath = pathsWithModifiedMatter[i];
+      const fileBuf = fs.readFileSync(fpath);
+      const modifiedDateResult = modifiedDate(fileBuf);
+      expect(modifiedDateResult).toEqual(correctDate);
+    }
+  });
+
+  it('Null when no frontmatter delimeters', () => {
+    pathsWithoutMatter.forEach((fpath) => {
+      expect(modifiedDate(fs.readFileSync(fpath))).toBeNull();
+    });
+  });
+
+  it('Null when empty frontmatter', () => {
+    pathsWithEmptyMatter.forEach((fpath) => {
+      expect(modifiedDate(fs.readFileSync(fpath))).toBeNull();
+    });
+  });
+
+  it('Null when matter exists, but not the `modified` field', () => {
+    pathsWithMatter.forEach((fpath) => {
+      if (!pathsWithModifiedMatter.includes(fpath)) {
+        expect(modifiedDate(fs.readFileSync(fpath))).toBeNull();
+      }
+    });
+  });
+
+  it('Undefined when modified matter exists, but its value is invalid', () => {
+    pathsWithInvalidModifiedMatter.forEach((fpath) => {
+      expect(modifiedDate(fs.readFileSync(fpath))).toBeUndefined();
     });
   });
 });
