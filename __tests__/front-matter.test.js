@@ -2,17 +2,17 @@ const fs = require('fs');
 const path = require('path');
 
 const {
-  matterStartDelimExists,
-  matterEndDelimExists,
-  matterExists,
-  matterDelimMismatch,
-  matterEmpty,
-  matterModifiedExists,
+  startDelimExists,
+  endDelimExists,
+  exists,
+  delimMismatch,
+  empty,
+  modifiedExists,
   modifiedDate,
 } = require('../lib/front-matter');
 
 const {
-  PROJECT_ROOT_PATH,
+  // PROJECT_ROOT_PATH,
   TESTING_DIR_PATH,
 } = require('../.jest/mocks');
 
@@ -70,153 +70,156 @@ beforeAll(() => {
     FILENAMES_WITH_INVALID_MODIFIED_MATTER.map((fname) => path.join(TESTING_DIR_PATH, fname)));
 });
 
-describe('lib/front-matter.matterStartDelimExists()', () => {
+describe('lib/front-matter.startDelimExists()', () => {
   it('Truthy when file contents have 1st line `---`', () => {
     pathsWithEmptyMatter.forEach((fpath) => {
-      expect(matterStartDelimExists(fs.readFileSync(fpath))).toBeTruthy();
+      expect(startDelimExists(fs.readFileSync(fpath))).toBeTruthy();
     });
-    expect(matterStartDelimExists(fs.readFileSync(pathWithoutEndMatterDelim)))
+    expect(startDelimExists(fs.readFileSync(pathWithoutEndMatterDelim)))
       .toBeTruthy();
     pathsWithMatter.forEach((fpath) => {
-      expect(matterStartDelimExists(fs.readFileSync(fpath))).toBeTruthy();
+      expect(startDelimExists(fs.readFileSync(fpath))).toBeTruthy();
     });
   });
 
   it('Falsy when file contents does not have 1st line `---`', () => {
     pathsWithNoMatter.forEach((fpath) => {
-      expect(matterStartDelimExists(fs.readFileSync(fpath))).toBeFalsy();
+      expect(startDelimExists(fs.readFileSync(fpath))).toBeFalsy();
     });
-    expect(matterStartDelimExists(fs.readFileSync(pathWithoutStartMatterDelim)))
+    expect(startDelimExists(fs.readFileSync(pathWithoutStartMatterDelim)))
       .toBeFalsy();
   });
 });
 
-describe('lib/front-matter.matterEndDelimExists()', () => {
+describe('lib/front-matter.endDelimExists()', () => {
   it('Truthy when file contents have `---`, after 1st line', () => {
     pathsWithEmptyMatter.forEach((fpath) => {
-      expect(matterEndDelimExists(fs.readFileSync(fpath))).toBeTruthy();
+      expect(endDelimExists(fs.readFileSync(fpath))).toBeTruthy();
     });
-    expect(matterEndDelimExists(fs.readFileSync(pathWithoutStartMatterDelim)))
+    expect(endDelimExists(fs.readFileSync(pathWithoutStartMatterDelim)))
       .toBeTruthy();
     pathsWithMatter.forEach((fpath) => {
-      expect(matterEndDelimExists(fs.readFileSync(fpath))).toBeTruthy();
+      expect(endDelimExists(fs.readFileSync(fpath))).toBeTruthy();
     });
   });
 
   it('Falsy when file contents does not have `---`, after 1st line', () => {
     pathsWithNoMatter.forEach((fpath) => {
-      expect(matterEndDelimExists(fs.readFileSync(fpath))).toBeFalsy();
+      expect(endDelimExists(fs.readFileSync(fpath))).toBeFalsy();
     });
-    expect(matterEndDelimExists(fs.readFileSync(pathWithoutEndMatterDelim)))
+    expect(endDelimExists(fs.readFileSync(pathWithoutEndMatterDelim)))
       .toBeFalsy();
   });
 });
 
-describe('lib/front-matter.matterExists()', () => {
+describe('lib/front-matter.exists()', () => {
   it('Truthy when `---` frontmatter delimeter exists in 1st line & somewhere after', () => {
     pathsWithMatter.forEach((fpath) => {
-      expect(matterExists(fs.readFileSync(fpath))).toBeTruthy();
+      expect(exists(fs.readFileSync(fpath))).toBeTruthy();
     });
     pathsWithEmptyMatter.forEach((fpath) => {
-      expect(matterExists(fs.readFileSync(fpath))).toBeTruthy();
+      expect(exists(fs.readFileSync(fpath))).toBeTruthy();
     });
   });
 
   it('Falsy when `---` delimiter either doesn\'t exist at start or after in file', () => {
     pathsWithNoMatter.forEach((fpath) => {
-      expect(matterExists(fs.readFileSync(fpath))).toBeFalsy();
+      expect(exists(fs.readFileSync(fpath))).toBeFalsy();
     });
-    expect(matterExists(fs.readFileSync(pathWithoutEndMatterDelim)))
+    expect(exists(fs.readFileSync(pathWithoutEndMatterDelim)))
       .toBeFalsy();
-    expect(matterExists(fs.readFileSync(pathWithoutStartMatterDelim)))
+    expect(exists(fs.readFileSync(pathWithoutStartMatterDelim)))
       .toBeFalsy();
   });
 });
 
-describe('lib/front-matter.matterDelimMismatch()', () => {
+describe('lib/front-matter.delimMismatch()', () => {
   it('Truthy when `---` frontmatter delimeter exists in 1st line, but not after', () => {
-    expect(matterDelimMismatch(fs.readFileSync(pathWithoutEndMatterDelim))).toBeTruthy();
+    expect(delimMismatch(fs.readFileSync(pathWithoutEndMatterDelim))).toBeTruthy();
   });
 
   it('Truthy when `---` frontmatter delimeter does not exists in 1st line, but does after', () => {
-    expect(matterDelimMismatch(fs.readFileSync(pathWithoutStartMatterDelim))).toBeTruthy();
+    expect(delimMismatch(fs.readFileSync(pathWithoutStartMatterDelim))).toBeTruthy();
   });
 
   it('Falsy when no frontmatter delimeters exist', () => {
     pathsWithNoMatter.forEach((fpath) => {
-      expect(matterDelimMismatch(fs.readFileSync(fpath))).toBeFalsy();
+      expect(delimMismatch(fs.readFileSync(fpath))).toBeFalsy();
     });
   });
 
   it('Falsy when frontmatter empty', () => {
     pathsWithEmptyMatter.forEach((fpath) => {
-      expect(matterDelimMismatch(fs.readFileSync(fpath))).toBeFalsy();
+      expect(delimMismatch(fs.readFileSync(fpath))).toBeFalsy();
     });
   });
 
   it('Falsy with existing & populated frontmatter', () => {
     pathsWithMatter.forEach((fpath) => {
-      expect(matterDelimMismatch(fs.readFileSync(fpath))).toBeFalsy();
+      expect(delimMismatch(fs.readFileSync(fpath))).toBeFalsy();
     });
   });
 });
 
-describe('lib/front-matter.matterEmpty()', () => {
+describe('lib/front-matter.empty()', () => {
   it('Truthy when frontmatter exists but is empty', () => {
     pathsWithEmptyMatter.forEach((fpath) => {
-      expect(matterEmpty(fs.readFileSync(fpath))).toBeTruthy();
+      expect(empty(fs.readFileSync(fpath))).toBeTruthy();
     });
   });
 
   it('Falsy when front matter exists & is populated', () => {
     pathsWithMatter.forEach((fpath) => {
-      expect(matterEmpty(fs.readFileSync(fpath))).toBeFalsy();
+      expect(empty(fs.readFileSync(fpath))).toBeFalsy();
     });
   });
 
   it('Falsy when no properly formatted frontmatter exists', () => {
     pathsWithoutMatter.forEach((fpath) => {
-      expect(matterEmpty(fs.readFileSync(fpath))).toBeFalsy();
+      expect(empty(fs.readFileSync(fpath))).toBeFalsy();
     });
   });
 });
 
-describe('lib/front-matter.matterModifiedExists()', () => {
+describe('lib/front-matter.modifiedExists()', () => {
   it('Truthy when frontmatter exists with "modified" field', () => {
     pathsWithModifiedMatter.forEach((fpath) => {
-      expect(matterModifiedExists(fs.readFileSync(fpath))).toBeTruthy();
+      expect(modifiedExists(fs.readFileSync(fpath))).toBeTruthy();
     });
   });
 
   it('Falsy when no frontmatter delimeters', () => {
     pathsWithoutMatter.forEach((fpath) => {
-      expect(matterModifiedExists(fs.readFileSync(fpath))).toBeFalsy();
+      expect(modifiedExists(fs.readFileSync(fpath))).toBeFalsy();
     });
   });
 
   it('Falsy when empty frontmatter', () => {
     pathsWithEmptyMatter.forEach((fpath) => {
-      expect(matterModifiedExists(fs.readFileSync(fpath))).toBeFalsy();
+      expect(modifiedExists(fs.readFileSync(fpath))).toBeFalsy();
     });
   });
 
   it('Falsy when matter exists, but not the `modified` field', () => {
     pathsWithMatter.forEach((fpath) => {
       if (!pathsWithModifiedMatter.includes(fpath)) {
-        expect(matterModifiedExists(fs.readFileSync(fpath))).toBeFalsy();
+        expect(modifiedExists(fs.readFileSync(fpath))).toBeFalsy();
       }
     });
   });
 });
 
 describe('lib/front-matter.modifiedDate()', () => {
-  it('Returns correct Date object with valid modified mattered files', () => {
+  let correctDates = [];
+  beforeAll(() => {
     // Create array of correct answers in order with pathsWithModifiedMatter
-    const correctDates = [
-      Date('2022-12-31T23:59:59Z'),
-      Date('2022-12-31T23:59:00+1'),
-      Date('2000-01-01T00:01:00Z'),
+    correctDates = [
+      Date.parse('2022-12-31T23:59:59Z'),
+      Date.parse('2022-12-31T23:59:00+1'),
+      Date.parse('2000-01-01T00:01:00Z'),
     ];
+  });
+  it('Returns correct Date object with valid modified mattered files', () => {
     for (let i = 0; i < pathsWithModifiedMatter.length; i += 1) {
       const correctDate = correctDates[i];
       const fpath = pathsWithModifiedMatter[i];
