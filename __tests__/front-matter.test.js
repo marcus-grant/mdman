@@ -7,6 +7,7 @@ const {
   matterExists,
   matterDelimMismatch,
   matterEmpty,
+  matterModifiedExists,
 } = require('../lib/front-matter');
 
 const {
@@ -15,12 +16,19 @@ const {
 } = require('../.jest/mocks');
 
 const FILENAMES_WITH_MATTER = [
+  'matter-modified.md',
   '.hidden-markdown.md',
   'containers.md',
   'modify-this-file.md',
   'no-created-matter.md',
   'no-modified-matter.md',
   'os-shell.md',
+];
+
+const FILENAMES_WITH_MODIFIED_MATTER = [
+  'matter-modified.md',
+  '.hidden-markdown.md',
+  'modify-this-file.md',
 ];
 
 const FILENAME_WITH_NO_MATTER = 'no-matter.md';
@@ -39,6 +47,7 @@ let pathsWithEmptyMatter;
 let pathWithoutStartMatterDelim;
 let pathWithoutEndMatterDelim;
 let pathsWithoutMatter;
+let pathsWithModifiedMatter;
 beforeAll(() => {
   pathsWithMatter = (
     FILENAMES_WITH_MATTER.map((fname) => path.join(TESTING_DIR_PATH, fname)));
@@ -50,6 +59,8 @@ beforeAll(() => {
     path.join(TESTING_DIR_PATH, FILENAME_WITHOUT_END_MATTER_DELIM));
   pathsWithoutMatter = (
     FILENAMES_WITHOUT_MATTER.map((fname) => path.join(TESTING_DIR_PATH, fname)));
+  pathsWithModifiedMatter = (
+    FILENAMES_WITH_MODIFIED_MATTER.map((fname) => path.join(TESTING_DIR_PATH, fname)));
 });
 
 describe('lib/front-matter.matterStartDelimExists()', () => {
@@ -159,6 +170,34 @@ describe('lib/front-matter.matterEmpty()', () => {
   it('Falsy when no properly formatted frontmatter exists', () => {
     pathsWithoutMatter.forEach((fpath) => {
       expect(matterEmpty(fs.readFileSync(fpath))).toBeFalsy();
+    });
+  });
+});
+
+describe('lib/front-matter.matterModifiedExists()', () => {
+  it('Truthy when frontmatter exists with "modified" field', () => {
+    pathsWithModifiedMatter.forEach((fpath) => {
+      expect(matterModifiedExists(fs.readFileSync(fpath))).toBeTruthy();
+    });
+  });
+
+  it('Falsy when no frontmatter delimeters', () => {
+    pathsWithoutMatter.forEach((fpath) => {
+      expect(matterModifiedExists(fs.readFileSync(fpath))).toBeFalsy();
+    });
+  });
+
+  it('Falsy when empty frontmatter', () => {
+    pathsWithEmptyMatter.forEach((fpath) => {
+      expect(matterModifiedExists(fs.readFileSync(fpath))).toBeFalsy();
+    });
+  });
+
+  it('Falsy when matter exists, but not the `modified` field', () => {
+    pathsWithMatter.forEach((fpath) => {
+      if (!pathsWithModifiedMatter.includes(fpath)) {
+        expect(matterModifiedExists(fs.readFileSync(fpath))).toBeFalsy();
+      }
     });
   });
 });
