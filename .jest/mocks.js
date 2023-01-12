@@ -3,8 +3,8 @@ const path = require('path');
 const process = require('process');
 
 const PROJECT_ROOT_PATH = path.join(__dirname, '..');
-const TESTING_DIR_PATH = path.join(PROJECT_ROOT_PATH, '__tests__', 'testing-dir');
-const MOCK_NOTES_PATH = path.join(PROJECT_ROOT_PATH, '__tests__', 'mock-notes');
+const TESTING_DIR_PATH = path.join(PROJECT_ROOT_PATH, '.jest', 'testing-dir');
+const MOCK_NOTES_PATH = path.join(PROJECT_ROOT_PATH, '.jest', 'mock-notes');
 
 const mkDirTesting = (testingDirPath = TESTING_DIR_PATH) => {
   if (!fs.existsSync(testingDirPath)) {
@@ -17,7 +17,7 @@ const cpMockNotes = (
   testingDirPath = TESTING_DIR_PATH
 ) => {
   if (!fs.existsSync(mockDirPath)) {
-    process.err(`Error, mock notes source directory doesn't exist at ${mockDirPath}`);
+    console.error(`Error, mock notes source directory doesn't exist at ${mockDirPath}`);
   } if (!fs.existsSync(testingDirPath)) {
     mkDirTesting(testingDirPath);
   }
@@ -25,7 +25,7 @@ const cpMockNotes = (
   try {
     mockFiles = fs.readdirSync(mockDirPath);
   } catch {
-    process.err(`Error in cpMockNotes readdir of ${mockDirPath}`);
+    console.error(`Error in cpMockNotes readdir of ${mockDirPath}`);
     process.exit(129);
   } finally {
     mockFiles.forEach(mockFile => {
