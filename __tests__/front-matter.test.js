@@ -214,9 +214,9 @@ describe('lib/front-matter.modifiedDate()', () => {
   beforeAll(() => {
     // Create array of correct answers in order with pathsWithModifiedMatter
     correctDates = [
-      Date.parse('2022-12-31T23:59:59Z'),
-      Date.parse('2022-12-31T23:59:00+1'),
-      Date.parse('2000-01-01T00:01:00Z'),
+      new Date(2023, 0, 1, 0, 59, 59),
+      new Date(2022, 11, 31, 23, 59, 0),
+      new Date(2000, 0, 1, 1, 1, 0),
     ];
   });
   it('Returns correct Date object with valid modified mattered files', () => {

@@ -1,3 +1,4 @@
+process.env.tz = 'UTC';
 module.exports = {
   verbose: true,
   globalSetup: './.jest/global-setup',
