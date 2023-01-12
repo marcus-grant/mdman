@@ -52,8 +52,8 @@ beforeAll(() => {
     FILENAMES_WITHOUT_MATTER.map((fname) => path.join(TESTING_DIR_PATH, fname)));
 });
 
-describe('Test lib/front-matter.matterStartDelimExists()', () => {
-  test('Truthy when file contents have 1st line `---`', () => {
+describe('lib/front-matter.matterStartDelimExists()', () => {
+  it('Truthy when file contents have 1st line `---`', () => {
     pathsWithEmptyMatter.forEach((fpath) => {
       expect(matterStartDelimExists(fs.readFileSync(fpath))).toBeTruthy();
     });
@@ -64,7 +64,7 @@ describe('Test lib/front-matter.matterStartDelimExists()', () => {
     });
   });
 
-  test('Falsy when file contents does not have 1st line `---`', () => {
+  it('Falsy when file contents does not have 1st line `---`', () => {
     pathsWithNoMatter.forEach((fpath) => {
       expect(matterStartDelimExists(fs.readFileSync(fpath))).toBeFalsy();
     });
@@ -73,8 +73,8 @@ describe('Test lib/front-matter.matterStartDelimExists()', () => {
   });
 });
 
-describe('Test lib/front-matter.matterEndDelimExists()', () => {
-  test('Truthy when file contents have `---`, after 1st line', () => {
+describe('lib/front-matter.matterEndDelimExists()', () => {
+  it('Truthy when file contents have `---`, after 1st line', () => {
     pathsWithEmptyMatter.forEach((fpath) => {
       expect(matterEndDelimExists(fs.readFileSync(fpath))).toBeTruthy();
     });
@@ -85,7 +85,7 @@ describe('Test lib/front-matter.matterEndDelimExists()', () => {
     });
   });
 
-  test('Falsy when file contents does not have `---`, after 1st line', () => {
+  it('Falsy when file contents does not have `---`, after 1st line', () => {
     pathsWithNoMatter.forEach((fpath) => {
       expect(matterEndDelimExists(fs.readFileSync(fpath))).toBeFalsy();
     });
@@ -94,17 +94,17 @@ describe('Test lib/front-matter.matterEndDelimExists()', () => {
   });
 });
 
-describe('Test lib/front-matter.matterExists()', () => {
-  test('Truthy when `---` frontmatter delimeter exists in 1st line & somewhere after', () => {
-    pathsWithMatter.forEach(fpath => {
+describe('lib/front-matter.matterExists()', () => {
+  it('Truthy when `---` frontmatter delimeter exists in 1st line & somewhere after', () => {
+    pathsWithMatter.forEach((fpath) => {
       expect(matterExists(fs.readFileSync(fpath))).toBeTruthy();
     });
-    pathsWithEmptyMatter.forEach(fpath => {
+    pathsWithEmptyMatter.forEach((fpath) => {
       expect(matterExists(fs.readFileSync(fpath))).toBeTruthy();
     });
   });
 
-  test('Falsy when `---` delimiter either doesn\'t exist at start or after in file', () => {
+  it('Falsy when `---` delimiter either doesn\'t exist at start or after in file', () => {
     pathsWithNoMatter.forEach((fpath) => {
       expect(matterExists(fs.readFileSync(fpath))).toBeFalsy();
     });
@@ -115,49 +115,49 @@ describe('Test lib/front-matter.matterExists()', () => {
   });
 });
 
-describe('Test lib/front-matter.matterDelimMismatch()', () => {
-  test('Truthy when `---` frontmatter delimeter exists in 1st line, but not after', () => {
+describe('lib/front-matter.matterDelimMismatch()', () => {
+  it('Truthy when `---` frontmatter delimeter exists in 1st line, but not after', () => {
     expect(matterDelimMismatch(fs.readFileSync(pathWithoutEndMatterDelim))).toBeTruthy();
   });
 
-  test('Truthy when `---` frontmatter delimeter does not exists in 1st line, but does after', () => {
+  it('Truthy when `---` frontmatter delimeter does not exists in 1st line, but does after', () => {
     expect(matterDelimMismatch(fs.readFileSync(pathWithoutStartMatterDelim))).toBeTruthy();
   });
 
-  test('Falsy when no frontmatter delimeters exist', () => {
+  it('Falsy when no frontmatter delimeters exist', () => {
     pathsWithNoMatter.forEach((fpath) => {
       expect(matterDelimMismatch(fs.readFileSync(fpath))).toBeFalsy();
     });
   });
 
-  test('Falsy when frontmatter empty', () => {
-    pathsWithEmptyMatter.forEach(fpath => {
+  it('Falsy when frontmatter empty', () => {
+    pathsWithEmptyMatter.forEach((fpath) => {
       expect(matterDelimMismatch(fs.readFileSync(fpath))).toBeFalsy();
     });
   });
 
-  test('Falsy with existing & populated frontmatter', () => {
-    pathsWithMatter.forEach(fpath => {
+  it('Falsy with existing & populated frontmatter', () => {
+    pathsWithMatter.forEach((fpath) => {
       expect(matterDelimMismatch(fs.readFileSync(fpath))).toBeFalsy();
     });
   });
 });
 
-describe('Test lib/front-matter.matterEmpty()', () => {
-  test('Truthy when frontmatter exists but is empty', () => {
-    pathsWithEmptyMatter.forEach(fpath => {
+describe('lib/front-matter.matterEmpty()', () => {
+  it('Truthy when frontmatter exists but is empty', () => {
+    pathsWithEmptyMatter.forEach((fpath) => {
       expect(matterEmpty(fs.readFileSync(fpath))).toBeTruthy();
     });
   });
 
-  test('Falsy when front matter exists & is populated', () => {
-    pathsWithMatter.forEach(fpath => {
+  it('Falsy when front matter exists & is populated', () => {
+    pathsWithMatter.forEach((fpath) => {
       expect(matterEmpty(fs.readFileSync(fpath))).toBeFalsy();
     });
   });
 
-  test('Falsy when no properly formatted frontmatter exists', () => {
-    pathsWithoutMatter.forEach(fpath => {
+  it('Falsy when no properly formatted frontmatter exists', () => {
+    pathsWithoutMatter.forEach((fpath) => {
       expect(matterEmpty(fs.readFileSync(fpath))).toBeFalsy();
     });
   });
