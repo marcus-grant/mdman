@@ -15,9 +15,9 @@ const {
 const EXPECT_HIDDEN_FILE_PATH = join(TESTING_DIR_PATH, '.hidden-text.txt');
 const EXPECT_HIDDEN_MD_FILE_PATH = join(TESTING_DIR_PATH, '.hidden-markdown.md');
 // listAllFiles()
-const EXPECT_ALL_FILES_COUNT = 12;
+const EXPECT_ALL_FILES_COUNT = 13;
 // listAllMdFiles()
-const EXPECT_ALL_MD_FILES_COUNT = 10;
+const EXPECT_ALL_MD_FILES_COUNT = 11;
 
 describe('file-management.listAllFiles tests', () => {
   let listAllFilesResults;
