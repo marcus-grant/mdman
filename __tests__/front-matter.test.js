@@ -214,11 +214,16 @@ describe('lib/front-matter.modifiedDate()', () => {
   beforeAll(() => {
     // Create array of correct answers in order with pathsWithModifiedMatter
     correctDates = [
-      new Date(2023, 0, 1, 0, 59, 59),
-      new Date(2022, 11, 31, 23, 59, 0),
-      new Date(2000, 0, 1, 1, 1, 0),
+      new Date(Date.UTC(2022, 11, 31, 23, 59, 59)),
+      new Date(Date.UTC(2022, 11, 31, 22, 59, 0)),
+      new Date(2000, 0, 1, 0, 1, 0),
     ];
   });
+
+  it('Ensure TZ is set to UTC for this test suite - timeZoneOffset is 0', () => {
+    expect(new Date().getTimezoneOffset()).toBe(0);
+  });
+
   it('Returns correct Date object with valid modified mattered files', () => {
     for (let i = 0; i < pathsWithModifiedMatter.length; i += 1) {
       const correctDate = correctDates[i];

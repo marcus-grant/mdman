@@ -2,6 +2,12 @@ const {
   stringifyTimeNum,
 } = require('../lib/dates');
 
+describe('Ensure TZ is set to UTC for this test suite', () => {
+  it('timeZoneOffset is 0', () => {
+    expect(new Date().getTimezoneOffset()).toBe(0);
+  });
+});
+
 describe('libs/dates.stringifyTimeNum', () => {
   let allTimeNums;
   let leadingZeroTimeNums;
