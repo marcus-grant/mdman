@@ -4,8 +4,18 @@ const {
   rmDirTesting,
 } = require('./mocks');
 
-module.exports = () => {
-  rmDirTesting;
+const setTzToUtc = () => {
+  process.env.tz = 'UTC';
+  process.env.TZ = 'UTC';
+};
+
+const setupBaseTestingDir = () => {
+  rmDirTesting();
   mkDirTesting();
   cpMockNotes();
+};
+
+module.exports = async () => {
+  setTzToUtc();
+  setupBaseTestingDir();
 };

@@ -1,14 +1,14 @@
 {
-  "name": ".scripts",
+  "name": "mdutils",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/.bin/jest"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "AGPLv3",
   "dependencies": {
     "gray-matter": "^4.0.3"
   },
