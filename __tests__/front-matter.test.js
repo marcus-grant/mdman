@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const matter = require('gray-matter');
 
 const {
   startDelimExists,
@@ -7,8 +8,10 @@ const {
   exists,
   delimMismatch,
   empty,
+  stringifyWithDefaults,
   modifiedExists,
   modifiedDate,
+  updateModifiedDate,
 } = require('../lib/front-matter');
 
 const {
@@ -16,6 +19,7 @@ const {
   TESTING_DIR_PATH,
 } = require('../.jest/mocks');
 
+// TODO: Refactor this stuff to fit in one object
 const FILENAMES_WITH_MATTER = [
   'matter-modified.md',
   '.hidden-markdown.md',
@@ -68,6 +72,48 @@ beforeAll(() => {
     FILENAMES_WITH_MODIFIED_MATTER.map((fname) => path.join(TESTING_DIR_PATH, fname)));
   pathsWithInvalidModifiedMatter = (
     FILENAMES_WITH_INVALID_MODIFIED_MATTER.map((fname) => path.join(TESTING_DIR_PATH, fname)));
+});
+
+describe('lib/front-matter.stringifyWithDefaults(matterFile)', () => {
+  const matterFileNestedYaml = matter(`---
+modified: 2000-01-01T00:00:00Z
+options:
+    draft: true
+    author: marcus
+tags:
+    - manifesto
+    - economics
+    - politics
+---
+# Some Manifesto
+
+>The wealth of those societies in which the capitalist mode of production...
+>--Some Guy
+
+`);
+  const expectedStr = `---
+modified: 2000-01-01T00:00:00.000Z
+options: {"draft":true, "author":marcus}
+tags: [manifesto,economics,politics]
+---
+# Some Manifesto
+
+>The wealth of those societies in which the capitalist mode of production...
+>--Some Guy
+
+`;
+  it('Correctly stringifies matter & content with flowLevel = 1', () => {
+    expect(stringifyWithDefaults(matterFileNestedYaml)).toEqual(expectedStr);
+  });
+  const emptyMatterFile = matter(`---
+---
+Hello World!
+`);
+  const expectedEmptyMatterStr = `Hello World!
+`;
+  it('Correctly stringifies empty matter & content', () => {
+    expect(stringifyWithDefaults(emptyMatterFile)).toEqual(expectedEmptyMatterStr);
+  });
 });
 
 describe('lib/front-matter.startDelimExists()', () => {
@@ -258,5 +304,60 @@ describe('lib/front-matter.modifiedDate()', () => {
     pathsWithInvalidModifiedMatter.forEach((fpath) => {
       expect(modifiedDate(fs.readFileSync(fpath))).toBeUndefined();
     });
+  });
+});
+
+describe('lib/front-matter.updateModifiedDate', () => {
+  const unmodifiedMatterFile = matter(`---
+modified: 2000-01-01T12:00:00Z
+tags: [a, b, c]
+---
+# Title
+Body text.
+`);
+  const emptyMatterFile = matter(`---
+---
+# Title
+Body text.
+`);
+  const noMatterFile = matter(`# Title
+Body text.
+`);
+  const expectedMatterStrWithTags = `---
+modified: '2023-01-01T12:00:00Z'
+tags: [a,b,c]
+---
+# Title
+Body text.
+`;
+  const expectedMatterStrWithoutTags = `---
+modified: '2023-01-01T12:00:00Z'
+---
+# Title
+Body text.
+`;
+  const modDate = new Date(Date.UTC(2023, 0, 1, 12, 0, 0));
+
+  it(
+    'Correctly updates existing `modified` matter w/ good Date w/o changing other parts',
+    () => {
+      expect(stringifyWithDefaults(
+        updateModifiedDate(unmodifiedMatterFile, modDate),
+      )).toEqual(expectedMatterStrWithTags);
+    },
+  );
+
+  it(
+    'Correctly updates NON-existent `modified` matter w/ good Date w/o changing other parts',
+    () => {
+      expect(stringifyWithDefaults(
+        updateModifiedDate(emptyMatterFile, modDate),
+      )).toEqual(expectedMatterStrWithoutTags);
+    },
+  );
+
+  it('null when no matter exits in file', () => {
+    expect(updateModifiedDate(noMatterFile, modDate))
+      .toBeNull();
   });
 });
