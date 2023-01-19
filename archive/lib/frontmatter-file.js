@@ -9,7 +9,7 @@ const fs = require('fs');
 const graymatter = require('gray-matter');
 const path = require('path');
 
-const fm = require('./front-matter');
+// const fm = require('./front-matter');
 
 const DEFAULT_STRINGIFY_OPTIONS = {
   flowLevel: 1,

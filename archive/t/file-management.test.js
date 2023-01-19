@@ -4,7 +4,7 @@ const { join } = require('path');
 const {
   PROJECT_ROOT_PATH,
   TESTING_DIR_PATH,
-} = require('../.jest/mocks');
+} = require('../../.jest/mocks');
 const {
   listAllFiles,
   listAllMdFiles,
@@ -15,9 +15,9 @@ const {
 const EXPECT_HIDDEN_FILE_PATH = join(TESTING_DIR_PATH, '.hidden-text.txt');
 const EXPECT_HIDDEN_MD_FILE_PATH = join(TESTING_DIR_PATH, '.hidden-markdown.md');
 // listAllFiles()
-const EXPECT_ALL_FILES_COUNT = 14;
+const EXPECT_ALL_FILES_COUNT = 16;
 // listAllMdFiles()
-const EXPECT_ALL_MD_FILES_COUNT = 12;
+const EXPECT_ALL_MD_FILES_COUNT = 14;
 
 describe('file-management.listAllFiles tests', () => {
   let listAllFilesResults;

@@ -3,7 +3,7 @@ const path = require('path');
 const FMFile = require('../lib/frontmatter-file');
 const {
   TESTING_DIR_PATH,
-} = require('../.jest/mocks');
+} = require('../../.jest/mocks');
 
 const testDirAbsPath = (fname) => path.join(TESTING_DIR_PATH, fname);
 

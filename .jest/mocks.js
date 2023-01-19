@@ -6,6 +6,8 @@ const PROJECT_ROOT_PATH = path.join(__dirname, '..');
 const TESTING_DIR_PATH = path.join(PROJECT_ROOT_PATH, '.jest', 'testing-dir');
 const MOCK_NOTES_PATH = path.join(PROJECT_ROOT_PATH, '.jest', 'mock-notes');
 
+const testDirAbsPath = (fname) => path.join(TESTING_DIR_PATH, fname);
+
 const mkDirTesting = (testingDirPath = TESTING_DIR_PATH) => {
   if (!fs.existsSync(testingDirPath)) {
     fs.mkdirSync(testingDirPath);
@@ -57,6 +59,7 @@ module.exports = {
   PROJECT_ROOT_PATH,
   TESTING_DIR_PATH,
   MOCK_NOTES_PATH,
+  testDirAbsPath,
   mkDirTesting,
   cpMockNotes,
   rmDirTesting,
