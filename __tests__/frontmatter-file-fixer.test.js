@@ -43,36 +43,42 @@ describe('frontmatter-fixer module', () => {
     const epochDate = new Date(1000);
     const epochStr = epochDate.toISOString();
     const newerDate = new Date(2023, 0, 1, 0, 0, 0);
-    beforeAll(() => {
+    let matterNoMatter;
+    let matterNoDate;
+    let matterOldDates;
+    beforeEach(() => {
       mock({
-        '/notes/epoch-time-no-matter.md': mock.file({
+        'epoch-time-no-matter.md': mock.file({
           mtime: epochDate,
           ctime: epochDate,
           birthtime: epochDate,
           content: 'Hello world!\n',
         }),
-        '/notes/epoch-time-no-date-matter.md': mock.file({
+        'epoch-time-no-date-matter.md': mock.file({
           mtime: epochDate,
           ctime: epochDate,
           birthtime: epochDate,
           content: '---\n---\nHello world!\n',
         }),
-        '/notes/newer-time-epoch-date-matter.md': mock.file({
+        'newer-time-epoch-date-matter.md': mock.file({
           mtime: newerDate,
           ctime: newerDate,
           birthtime: newerDate,
           content:
-              `---\nmodified: ${epochStr}\ncreated: ${epochStr}\n---\nHello world!\n`,
+            `---\nmodified: ${epochStr}\ncreated: ${epochStr}\n---\nHello world!\n`,
         }),
       });
+      matterNoMatter = graymatter(fs.readFileSync('epoch-time-no-matter.md'));
+      matterNoDate = graymatter(fs.readFileSync('epoch-time-no-date-matter.md'));
+      matterOldDates = graymatter(fs.readFileSync('newer-time-epoch-date-matter.md'));
     });
-    afterAll(() => { mock.restore(); });
+    afterEach(() => { mock.restore(); });
 
     describe(fmFixer.updateModifiedMatter, () => {
       it('returns correct updated modified matter & string for files without matter', () => {
         const result = fmFixer.updateModifiedMatter({
-          filePath: '/notes/epoch-time-no-matter.md',
-          matter: graymatter(fs.readFileSync('/notes/epoch-time-no-matter.md')),
+          filePath: 'epoch-time-no-matter.md',
+          matter: matterNoMatter,
         });
         expect(result.matter.data.modified).toEqual(epochDate);
         expect(result.fileStr).toEqual((''
@@ -85,8 +91,8 @@ describe('frontmatter-fixer module', () => {
 
       it('returns correct updated modified matter & string for files with empty matter', () => {
         const result = fmFixer.updateModifiedMatter({
-          filePath: '/notes/epoch-time-no-date-matter.md',
-          matter: graymatter(fs.readFileSync('/notes/epoch-time-no-date-matter.md')),
+          filePath: 'epoch-time-no-date-matter.md',
+          matter: matterNoDate,
         });
         expect(result.matter.data.modified).toEqual(epochDate);
         expect(result.fileStr).toEqual((''
@@ -95,12 +101,13 @@ describe('frontmatter-fixer module', () => {
           + '---\n'
           + 'Hello world!\n'
         ));
+        mock.restore();
       });
 
       it('returns correct updated modified matter & string for files with old dates matter', () => {
         const result = fmFixer.updateModifiedMatter({
-          matter: graymatter(fs.readFileSync('/notes/newer-time-epoch-date-matter.md')),
-          filePath: '/notes/newer-time-epoch-date-matter.md',
+          matter: matterOldDates,
+          filePath: 'newer-time-epoch-date-matter.md',
         });
         const { matter, fileStr } = result;
         expect(matter.data.modified).toEqual(newerDate);

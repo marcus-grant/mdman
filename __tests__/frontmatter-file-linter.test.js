@@ -295,28 +295,28 @@ describe('frontmatter-file-linter Date based functions', () => {
   });
 
   describe(fmlint.createdMatterNewerThanBirthtime, () => {
-    it('is truthy when created matter date is newer than fs.stat.mtime', () => {
+    it('is falsy when created matter date is newer than fs.stat.birthtime', () => {
       const filePath = '/notes/newly-modified-created-matter.md';
       const matter = graymatter(fs.readFileSync(filePath));
-      expect(fmlint.createdMatterNewerThanBirthtime({
+      expect(fmlint.createdMatterOlderThanBirthtime({
         filePath,
         matter,
-      })).toBeTruthy();
+      })).toBeFalsy();
     });
 
-    it('is falsy when created matter date is older than fs.stat.mtime', () => {
+    it('is truthy when created matter date is older than fs.stat.birthtime', () => {
       const filePath = '/notes/old-modified-created-matter.md';
       const matter = graymatter(fs.readFileSync(filePath));
-      expect(fmlint.createdMatterNewerThanBirthtime({
+      expect(fmlint.createdMatterOlderThanBirthtime({
         matter,
         filePath,
-      })).toBeFalsy();
+      })).toBeTruthy();
     });
 
     it('is truthy when created matter date is same as fs.stat.mtime', () => {
       const filePath = '/notes/matching-modified-created-matter.md';
       const matter = graymatter(fs.readFileSync(filePath));
-      expect(fmlint.createdMatterNewerThanBirthtime({
+      expect(fmlint.createdMatterOlderThanBirthtime({
         matter,
         filePath,
       })).toBeTruthy();
