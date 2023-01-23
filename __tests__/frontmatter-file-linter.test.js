@@ -88,7 +88,7 @@ describe(fmlint.nonEmptyMatter, () => {
     })).toBeFalsy();
   });
 
-  it('is undefined when theres no frontmatter markers', () => {
+  it('is falsy when theres no frontmatter markers', () => {
     const fileStr = (''
       + '# Title\n'
       + 'Body text.\n'
@@ -96,7 +96,7 @@ describe(fmlint.nonEmptyMatter, () => {
     expect(fmlint.nonEmptyMatter({
       matter: graymatter(fileStr),
       fileStr,
-    })).toBeUndefined();
+    })).toBeFalsy();
   });
 });
 
