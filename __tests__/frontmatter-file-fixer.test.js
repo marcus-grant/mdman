@@ -5,28 +5,24 @@ const graymatter = require('gray-matter');
 const fmFixer = require('../lib/frontmatter-file-fixer');
 
 describe(fmFixer.stringifyWithOptions, () => {
-  let nestedLongYamlMatter;
-  let matterFileStr;
-  let stringifiedLines;
-  beforeEach(() => {
-    nestedLongYamlMatter = graymatter(''
-      + '---\n'
-      + 'shortList: [a,b,c]\n'
-      + 'longList: [abcdefghijklmnopqrstuvwxyz0123456789, '
-      + 'dog, cat, elephant, giraffe, lion, tiger, snake, pelican, chicken]'
-      + 'object: { foo: bar, hello: world }\n'
-      + '---\n'
-      + 'Hello World!\n');
-    matterFileStr = fmFixer.stringifyWithOptions(nestedLongYamlMatter);
-    stringifiedLines = matterFileStr.split('\n');
-  });
-  afterEach(() => { mock.restore(); });
+  const wideNestedMatterStr = (''
+    + '---\n'
+    + 'shortList: [a,b,c]\n'
+    + 'longList: [abcdefghijklmnopqrstuvwxyz0123456789, '
+    + 'dog, cat, elephant, giraffe, lion, tiger, snake, pelican, chicken]'
+    + 'object: { foo: bar, hello: world }\n'
+    + '---\n'
+  );
   it('default stringify has single & condensed line flow on collection YAML matter', () => {
-    expect(stringifiedLines).toContain('shortList: [a,b,c]');
-    expect(stringifiedLines).toContain((''
-      + 'longList: [abcdefghijklmnopqrstuvwxyz0123456789,'
-      + 'dog,cat,elephant,giraffe,lion,tiger,snake,pelican,chicken]'
-    ));
+    const matter = graymatter(wideNestedMatterStr);
+    const { content, data } = matter;
+    expect(fmFixer.stringifyWithOptions(content, data).split('\n'))
+      .toContain('shortList: [a,b,c]');
+    expect(fmFixer.stringifyWithOptions(content, data).split('\n'))
+      .toContain((''
+        + 'longList: [abcdefghijklmnopqrstuvwxyz0123456789,'
+        + 'dog,cat,elephant,giraffe,lion,tiger,snake,pelican,chicken]'
+      ));
   });
 });
 
