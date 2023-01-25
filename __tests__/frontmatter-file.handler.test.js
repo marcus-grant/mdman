@@ -93,10 +93,16 @@ describe(handler.checkLintersOnFiles, () => {
   });
   afterAll(() => { mock.restore(); });
   it('contains array with all rules as failing on no front matter or their delimiters file', () => {
-    expect(lintResults).toContainEqual({
-      filePath: './a/no-matter.md',
-      rules: ['FML001', 'FML002', 'FML100', 'FML101', 'FML110', 'FML111', 'FML120', 'FML121'],
-    });
+    expect(lintResults.find((e) => e.filePath === './a/no-matter.md').rules)
+      .toEqual(['FML001', 'FML002', 'FML100', 'FML101', 'FML110', 'FML111', 'FML120', 'FML121']);
+  });
+  it('contains array with subset of rules as failing on no date matter file', () => {
+    expect(lintResults.find((e) => e.filePath === './a/foobar.md').rules)
+      .toEqual(['FML100', 'FML101', 'FML110', 'FML111', 'FML120', 'FML121']);
+  });
+  it('contains array with failed rules as failing on correctly formatted file', () => {
+    expect(lintResults.find((e) => e.filePath === './a/correct-dates.md').rules)
+      .toEqual([]);
   });
 });
 
