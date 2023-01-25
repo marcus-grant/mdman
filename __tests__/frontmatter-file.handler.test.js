@@ -22,12 +22,12 @@ describe(handler.sortRules, () => {
 
 describe(handler.checkLintersOnFile, () => {
   let nowStr;
-  let epochStr;
+  // let epochStr;
   beforeAll(() => {
     const now = new Date();
     const epoch = new Date(1000);
     nowStr = now.toISOString();
-    epochStr = epoch.toISOString();
+    // epochStr = epoch.toISOString();
     mock({
       './a/no-matter': mock.file({
         content: 'Hello World!\n',
@@ -62,57 +62,48 @@ describe(handler.checkLintersOnFile, () => {
   it('returns no rules on a correctly formatted file with dates', () => {
     expect(handler.checkLintersOnFile('./a/correct-dates')).toEqual([]);
   });
+});
 
-  // TODO: Move these into own section with mock restore for each written file
-  it('fixes all rules of all files', () => {
-    const failedRules = handler.checkLintersOnFile('./a/no-matter');
-    handler.applyAllFixesToFile('./a/no-matter', failedRules);
-    expect(fs.readFileSync('./a/no-matter').toString())
-      .toEqual(`---\ncreated: ${epochStr}\nmodified: ${nowStr}\n---\nHello World!\n`);
+describe(handler.checkLintersOnFiles, () => {
+  let nowStr;
+  // let epochStr;
+  let lintResults;
+  beforeAll(() => {
+    const now = new Date();
+    const epoch = new Date(1000);
+    nowStr = now.toISOString();
+    // epochStr = epoch.toISOString();
+    mock({
+      './a/no-matter.md': mock.file({
+        content: 'Hello World!\n',
+        mtime: now,
+        ctime: epoch,
+        birthtime: epoch,
+      }),
+      './a/foobar.md': '---\nfoo: bar\n---\nHello World!\n',
+      './a/correct-dates.md': mock.file({
+        content: `---\ncreated: ${nowStr}\nmodified: ${nowStr}\n---\nHello World!\n`,
+        mtime: now,
+        ctime: now,
+        birthtime: now,
+      }),
+    });
+    const filePaths = fs.readdirSync('./a').map((fp) => `./a/${fp}`);
+    lintResults = handler.checkLintersOnFiles(filePaths);
+  });
+  afterAll(() => { mock.restore(); });
+  it('contains array with all rules as failing on no front matter or their delimiters file', () => {
+    expect(lintResults).toContainEqual({
+      filePath: './a/no-matter.md',
+      rules: ['FML001', 'FML002', 'FML100', 'FML101', 'FML110', 'FML111', 'FML120', 'FML121'],
+    });
   });
 });
-// describe(handler.checkLinterOnFile, () => {
-//   beforeAll(() => {
-//     const now = new Date();
-//     const nowStr = now.toISOString();
-//     const epochDate = new Date(1000);
-//     const epochStr = epochDate.toISOString();
-//     const wrapMatter = (matterStr) => `---\n${matterStr}---\n`;
-//     const mdFileStr = (matterStr) => `${wrapMatter(matterStr)}Hello World!\n`;
-//     const mockFile = (matterStr, mtime = now, birthtime = now) => mock.file({
-//       content: mdFileStr(matterStr),
-//       ctime: birthtime,
-//       mtime,
-//       birthtime,
-//     });
-//     mock({
-//       '/foo/fml001-pass': '---\n---\nHello World!\n',
-//       '/foo/fml001-fail': 'Hello World!\n',
-//       '/foo/fml002-pass': mockFile('foo: bar\n'),
-//       '/foo/fml002-fail': '---\n---\nHello World!\n',
-//       '/foo/fml003-pass': mdFileStr('foo: bar\nhello: world\n'),
-//       '/foo/fml003-fail': mdFileStr('foo: bar\nfoo: baz\n'),
-//       '/foo/fml100-pass': mdFileStr(`created: ${nowStr}\nmodified: ${nowStr}`),
-//       '/foo/fml100-fail': mdFileStr('foo: bar'),
-//       '/foo/fml101-pass': mdFileStr(`created: ${nowStr}\nmodified: ${nowStr}`),
-//       '/foo/fml101-fail': mdFileStr('foo: bar'),
-//       '/foo/fml110-pass': mdFileStr(`created: ${nowStr}\nmodified: ${nowStr}`),
-//       '/foo/fml110-fail': mdFileStr('foo: bar'),
-//       '/foo/fml111-pass': mdFileStr(`created: ${nowStr}\nmodified: ${nowStr}`),
-//       '/foo/fml111-fail': mdFileStr('foo: bar'),
-//       '/foo/fml120-pass': mockFile(`created: ${epochStr}\nmodified: ${nowStr}`, now, now),
-//       '/foo/fml120-fail': mockFile(`created: ${nowStr}\nmodified: ${nowStr}`, now, epochDate),
-//       '/foo/fml121-pass': mockFile(`created: ${epochStr}\nmodified: ${nowStr}`, now, now),
-//       '/foo/fml121-fail': mockFile(`created: ${epochStr}\nmodified: ${epochStr}`, now, now),
-//     });
-//   });
-//   afterAll(() => { mock.restore(); });
 
-//   it('applies fml(001,002,003,100,101,110,111,120,121) rules correctly FML000pass', () => {
-//     const filePaths = fs.readdirSync('foo');
-//     filePaths.forEach((filePath) => {
-//       expect(handler.checkLinterOnFile(filePath, handler.ALL_LINT_RULES)
-//         .toEqual(filePath.includes('fail') ? false : true)
-//     });
-//   });
+// TODO: Move these into own section with mock restore for each written file
+// it('fixes all rules of all files', () => {
+//   const failedRules = handler.checkLintersOnFile('./a/no-matter');
+//   handler.applyAllFixesToFile('./a/no-matter', failedRules);
+//   expect(fs.readFileSync('./a/no-matter').toString())
+//     .toEqual(`---\ncreated: ${epochStr}\nmodified: ${nowStr}\n---\nHello World!\n`);
 // });
