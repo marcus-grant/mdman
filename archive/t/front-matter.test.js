@@ -12,12 +12,12 @@ const {
   modifiedExists,
   modifiedDate,
   updateModifiedDate,
-} = require('../lib/front-matter');
+} = require('../../lib/front-matter');
 
 const {
   // PROJECT_ROOT_PATH,
   TESTING_DIR_PATH,
-} = require('../.jest/mocks');
+} = require('../../.jest/mocks');
 
 // TODO: Refactor this stuff to fit in one object
 const FILENAMES_WITH_MATTER = [
