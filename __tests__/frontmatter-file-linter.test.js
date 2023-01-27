@@ -294,7 +294,7 @@ describe('frontmatter-file-linter Date based functions', () => {
     });
   });
 
-  describe(fmlint.createdMatterNewerThanBirthtime, () => {
+  describe(fmlint.createdMatterOlderThanBirthtime, () => {
     it('is falsy when created matter date is newer than fs.stat.birthtime', () => {
       const filePath = '/notes/newly-modified-created-matter.md';
       const matter = graymatter(fs.readFileSync(filePath));

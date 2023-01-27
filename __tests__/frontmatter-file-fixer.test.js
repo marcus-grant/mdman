@@ -130,11 +130,11 @@ describe('frontmatter-fixer date functions', () => {
         matter: matterOldDates,
         filePath: '/notes/newer-time-epoch-date-matter.md',
       });
-      expect(result.matter.data.created).toEqual(newerDate);
+      expect(result.matter.data.created).toEqual(epochDate);
       expect(result.fileStr).toEqual((''
         + '---\n'
         + 'modified: 1970-01-01T00:00:01.000Z\n'
-        + 'created: 2023-01-01T00:00:00.000Z\n'
+        + 'created: 1970-01-01T00:00:01.000Z\n'
         + '---\n'
         + 'Hello world!\n'
       ));

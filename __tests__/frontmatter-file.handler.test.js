@@ -105,8 +105,8 @@ describe('frontmatter-file-handler handlers using files', () => {
         .toEqual(['FML100', 'FML101', 'FML110', 'FML111', 'FML120', 'FML121']);
     });
     it('contains array with failed rules as failing on correctly formatted file', () => {
-      expect(lintResults.find((e) => e.filePath === './a/correct-dates.md').rules)
-        .toEqual([]);
+      expect(lintResults.find((e) => e.filePath === './a/correct-dates.md'))
+        .toBeFalsy();
     });
   });
 
