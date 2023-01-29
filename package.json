@@ -1,8 +1,9 @@
 {
-  "name": "mdutils",
+  "name": "mdman",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "bin": "index.js",
   "scripts": {
     "test": "jest"
   },
